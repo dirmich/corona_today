@@ -3,7 +3,13 @@ package com.corona_today;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.util.Log;
 import android.widget.RemoteViews;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Implementation of App Widget functionality.
@@ -13,13 +19,27 @@ public class Widget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        CharSequence widgetText = context.getString(R.string.appwidget_text);
-        // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
+        try {
+            SharedPreferences sharedPref = context.getSharedPreferences("DATA",Context.MODE_PRIVATE);
+            String appString = sharedPref.getString("appData","{\"text\":'no data',\"color\":'#FFFFFF'}");
+            JSONObject appData = new JSONObject(appString);
+            Log.d("corona-widget",appString);
+
+            RemoteViews views = new RemoteViews(context.getPackageName(),R.layout.widget);
+            views.setTextViewText(R.id.appwidget_text,appData.getString("text"));
+            views.setTextColor(R.id.appwidget_text,Color.parseColor(appData.getString("color")));
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        }
+        catch(JSONException e) {
+            e.printStackTrace();
+        }
+//        CharSequence widgetText = context.getString(R.string.appwidget_text);
+//        // Construct the RemoteViews object
+//        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+//        views.setTextViewText(R.id.appwidget_text, widgetText);
 
         // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+//        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override

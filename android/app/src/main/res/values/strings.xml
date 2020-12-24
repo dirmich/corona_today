@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">corona_today</string>
+    <string name="appwidget_text">오늘의 코로나</string>
+    <string name="add_widget">Add widget</string>
 </resources>
